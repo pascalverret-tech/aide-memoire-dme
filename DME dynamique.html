@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aide-Mémoire: Connexion DME</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9; /* slate-100 */
+        }
+        .step-card {
+            border-left: 4px solid #065959; /* Main color */
+            background-color: #f0f7f7; /* Lighter shade for main color */
+            transition: all 0.2s ease-in-out;
+        }
+        .decision-point {
+            border-left: 4px solid #f59e0b; /* amber-500 */
+            background-color: #fffbeb; /* amber-50 */
+        }
+        .conditional-step {
+            border-left: 4px solid #1d4ed8; /* blue-700 */
+            background-color: #eff6ff; /* blue-50 */
+        }
+        .step-title {
+            color: #065959; /* Main color */
+        }
+        .decision-title {
+            color: #92400e; /* amber-800 */
+        }
+        .conditional-title {
+            color: #1e3a8a; /* blue-900 */
+        }
+        .resource-link {
+            color: #065959; /* Main color */
+            cursor: pointer;
+            font-weight: 500;
+        }
+         .resource-link:hover {
+            text-decoration: underline;
+        }
+        .header-subtitle {
+            color: #065959; /* Main color */
+        }
+        input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            height: 1.25rem;
+            width: 1.25rem;
+            min-width: 1.25rem;
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1; /* slate-300 */
+            border-radius: 0.375rem; /* rounded-md */
+            display: inline-block;
+            position: relative;
+            cursor: pointer;
+            margin-right: 0.75rem;
+            transition: all 0.2s ease-in-out;
+        }
+        input[type="checkbox"]:hover {
+             border-color: #065959; /* Main color */
+        }
+        input[type="checkbox"]:checked {
+            background-color: #065959; /* Main color */
+            border-color: #065959; /* Main color */
+        }
+        input[type="checkbox"]:checked::after {
+            content: '\2713';
+            font-size: 0.875rem;
+            color: white;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .step-content {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .step-text {
+            line-height: 1.5rem;
+            color: #334155; /* slate-700 */
+        }
+        .sub-step-text {
+             line-height: 1.25rem;
+             color: #475569; /* slate-600 */
+             font-size: 0.875rem;
+        }
+        /* Styles for Tabs */
+        .tab-link {
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            padding: 1rem 0.25rem;
+            cursor: pointer;
+        }
+        .tab-link.active {
+            border-color: #065959; /* Main color */
+            color: #065959; /* Main color */
+            font-weight: 600;
+        }
+        .tab-pane {
+            display: none;
+        }
+        .tab-pane.active {
+            display: block;
+        }
+        #feedback-message {
+            transition: opacity 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-6 md:p-8">
+    <div class="max-w-4xl mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-xl">
+        <header class="mb-6 text-center">
+            <h1 id="main-title" class="text-3xl sm:text-4xl font-bold text-slate-800">Aide-Mémoire</h1>
+            <p class="text-lg header-subtitle font-semibold mt-1">Processus de Connexion DME</p>
+        </header>
+
+        <!-- Practice Number Input -->
+        <div class="bg-slate-100 p-4 rounded-lg mb-8 flex flex-col sm:flex-row items-center gap-4">
+            <label for="practice-number-input" class="font-semibold text-slate-700 whitespace-nowrap">Numéro de pratique :</label>
+            <input type="text" id="practice-number-input" placeholder="Entrez un numéro et chargez..." class="w-full sm:flex-grow px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500">
+            <div class="flex gap-2">
+                <button id="load-btn" class="bg-teal-700 text-white font-bold py-2 px-4 rounded-md hover:bg-teal-800 transition-colors">Charger</button>
+                <button id="save-btn" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-700 transition-colors">Sauvegarder</button>
+            </div>
+             <span id="feedback-message" class="text-sm font-medium text-green-600 opacity-0"></span>
+        </div>
+
+
+        <!-- Tabs Navigation -->
+        <div class="border-b border-slate-200 mb-8">
+            <nav class="-mb-px flex flex-wrap" aria-label="Tabs">
+                <button class="tab-link active text-center text-slate-500 hover:text-slate-700 text-base font-medium" data-tab-target="medesync">
+                    Medesync (Telus)
+                </button>
+                <button class="tab-link text-center text-slate-500 hover:text-slate-700 text-base font-medium" data-tab-target="medfar">
+                    Medfar (Myle)
+                </button>
+                <button class="tab-link text-center text-slate-500 hover:text-slate-700 text-base font-medium" data-tab-target="omnimed">
+                    Omnimed
+                </button>
+                <button class="tab-link text-center text-slate-500 hover:text-slate-700 text-base font-medium" data-tab-target="ofys">
+                    Ofys
+                </button>
+            </nav>
+        </div>
+
+        <!-- Tab Content -->
+        <div>
+            <!-- Medesync (Telus) Content -->
+            <div id="medesync" class="tab-pane active">
+                <div class="space-y-8">
+                    <!-- Step 1: Initial Request -->
+                    <div class="step-card p-5 rounded-xl">
+                        <h2 class="text-xl font-bold step-title mb-4">Étape 1: Réception et Traitement de la Demande Initiale</h2>
+                        <div class="step-content">
+                            <input type="checkbox" id="medesync_step1_1"><label for="medesync_step1_1" class="step-text flex-grow">Le médecin fait une demande de connexion au DME.</label>
+                        </div>
+        
+                        <div class="decision-point p-4 rounded-lg mt-4">
+                            <h3 class="font-bold decision-title mb-2 text-lg">Point de Décision: Qui a reçu la demande?</h3>
+                            <p class="text-slate-600 mb-4">Sélectionnez le scénario approprié pour continuer.</p>
+                            <div class="space-y-4">
+                                <div>
+                                    <p class="font-semibold text-slate-700">→ Si la demande est reçue par le <span class="font-bold">Conseiller Senior</span>:</p>
+                                    <div class="pl-6 mt-2 space-y-2">
+                                        <div class="step-content">
+                                            <input type="checkbox" id="medesync_step1_2a"><label for="medesync_step1_2a" class="step-text flex-grow">Envoyer les informations suivantes au Support Applicatif à <a href="mailto:soutien@facturation.net" class="resource-link">soutien@facturation.net</a>:</label>
+                                        </div>
+                                        <div class="pl-10 text-slate-600 text-sm space-y-1">
+                                            <div class="step-content"><input type="checkbox" id="medesync_info_1"><label for="medesync_info_1" class="sub-step-text flex-grow">Nom et Prénom du médecin</label></div>
+                                            <div class="step-content"><input type="checkbox" id="medesync_info_2"><label for="medesync_info_2" class="sub-step-text flex-grow">Numéro de compte Facturation.net (CL)</label></div>
+                                            <div class="step-content"><input type="checkbox" id="medesync_info_etab"><label for="medesync_info_etab" class="sub-step-text flex-grow">Numéro établissement</label></div>
+                                            <div class="step-content"><input type="checkbox" id="medesync_info_5"><label for="medesync_info_5" class="sub-step-text flex-grow">Numéro de groupe</label></div>
+                                            <div class="step-content"><input type="checkbox" id="medesync_info_6"><label for="medesync_info_6" class="sub-step-text flex-grow">Type de castonguette demandé (Intelligente ou Legacy)</label></div>
+                                            <div class="pl-8 mt-1 space-x-4">
+                                                <a href="https://drive.google.com/file/d/1q00Fme9VKoC3Kxtoz-coio8PTcVFkTG5/view?usp=drive_link" target="_blank" class="resource-link text-xs">📎 Voir l'exemple (Intelligente)</a>
+                                                <a href="https://drive.google.com/file/d/1FD7h0yz4a1wYxFeo08viJENDnrs4CgOS/view?usp=drive_link" target="_blank" class="resource-link text-xs">📎 Voir l'exemple (Legacy)</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+        
+                                <div class="pt-2">
+                                    <p class="font-semibold text-slate-700">→ Si la demande est reçue par le <span class="font-bold">Support Applicatif</span>:</p>
+                                     <div class="pl-6 mt-2 space-y-2">
+                                        <div class="step-content">
+                                            <input type="checkbox" id="medesync_step1_2b"><label for="medesync_step1_2b" class="step-text flex-grow">Valider que toutes les informations requises sont présentes.</label>
+                                        </div>
+                                        <div class="step-content">
+                                            <input type="checkbox" id="medesync_step1_3b"><label for="medesync_step1_3b" class="step-text flex-grow">Si des informations manquent, les demander au Conseiller Senior (type de castonguette).</label>
+                                        </div>
+                                        <div class="step-content">
+                                            <input type="checkbox" id="medesync_step1_4b"><label for="medesync_step1_4b" class="step-text flex-grow">Aviser le conseiller senior.</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <!-- Step 2: Formulaire -->
+                    <div class="step-card p-5 rounded-xl">
+                        <h2 class="text-xl font-bold step-title mb-4">Étape 2: Préparation et Soumission des Formulaires</h2>
+                        <div class="space-y-4">
+                             <div class="step-content">
+                                <input type="checkbox" id="medesync_step2_1"><label for="medesync_step2_1" class="step-text flex-grow">Remplir le formulaire "Demande de connexion" avec les informations du médecin.</label>
+                            </div>
+                            <div class="ml-10">
+                                <p class="text-xs text-slate-500 italic mb-2">Note: Ce formulaire est ensuite acheminé à Telus.</p>
+                                <a href="https://drive.google.com/file/d/1KrzR5DjQNYnA8UXoW01RhYOfPMd-Fl8p/view?usp=sharing" target="_blank" class="resource-link">📎 Ouvrir la Demande de Connexion.pdf</a>
+                            </div>
+        
+                            <div class="conditional-step p-4 rounded-lg mt-2">
+                                <h3 class="font-bold conditional-title mb-2">Étapes pour Castonguette Intelligente Uniquement</h3>
+                                <div class="step-content">
+                                    <input type="checkbox" id="medesync_step2_1a"><label for="medesync_step2_1a" class="step-text flex-grow">Support applicatif: remplir le Google Sheet (Intégration_DME_Castonguette_FMP).</label>
+                                </div>
+                                <div class="step-content">
+                                    <input type="checkbox" id="medesync_step2_1b"><label for="medesync_step2_1b" class="step-text flex-grow">Support applicatif: faire la configuration des utilisateurs Castonguette intelligente, dans FacNet 2.0.</label>
+                                </div>
+                            </div>
+        
+                            <div class="step-content">
+                                <input type="checkbox" id="medesync_step2_2"><label for="medesync_step2_2" class="step-text flex-grow">Envoyer le formulaire au responsable de la clinique pour obtenir sa signature.</label>
+                            </div>
+        
+                            <div class="step-content">
+                                <input type="checkbox" id="medesync_step2_3"><label for="medesync_step2_3" class="step-text flex-grow">À la réception, valider que le formulaire est complet et bien signé.</label>
+                            </div>
+        
+                            <div class="step-content">
+                                <input type="checkbox" id="medesync_step2_4"><label for="medesync_step2_4" class="step-text flex-grow">Remplir la demande en ligne de Telus et joindre le formulaire signé.</label>
+                            </div>
+                            <div class="ml-10">
+                                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSdN0UFQtJ5QZytlaq8tJmxKyKKEiRb6-DXZsdQyRFDXwcx96A/viewform" target="_blank" class="resource-link">📎 Ouvrir le formulaire de demande Telus</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 3: Configuration -->
+                    <div class="step-card p-5 rounded-xl">
+                        <h2 class="text-xl font-bold step-title mb-4">Étape 3: Configuration du DME par le Médecin</h2>
+                        <div class="space-y-4">
+                            <div class="step-content">
+                                <input type="checkbox" id="medesync_step3_1"><label for="medesync_step3_1" class="step-text flex-grow">Attendre le courriel de réponse de Telus contenant les accès (le courriel sera envoyé au médecin et au support).</label>
+                            </div>
+                            <div class="ml-10 space-x-4">
+                                <a href="https://drive.google.com/file/d/1W6eyowcgKrFzGbsCRqRx4AgRitqK1A4D/view?usp=drive_link" target="_blank" class="resource-link text-sm">📎 Voir exemple de courriel (Intelligente)</a>
+                                <a href="https://drive.google.com/file/d/1boQ7kU2DZ2eu47nBvw-PjHQ-w4aZ9dtJ/view?usp=drive_link" target="_blank" class="resource-link text-sm">📎 Voir exemple de courriel (Legacy)</a>
+                            </div>
+                            <div class="step-content">
+                                <input type="checkbox" id="medesync_step3_3"><label for="medesync_step3_3" class="step-text flex-grow">Le médecin doit configurer son profil Medesync selon les étapes suivantes:</label>
+                            </div>
+                            <div class="ml-10 border-l-2 border-slate-300 pl-4 py-2 space-y-1 text-slate-600 text-sm">
+                                <div class="step-content"><input type="checkbox" id="medesync_config_1"><label for="medesync_config_1" class="sub-step-text flex-grow">Se connecter à Medesync.</label></div>
+                                <div class="step-content"><input type="checkbox" id="medesync_config_2"><label for="medesync_config_2" class="sub-step-text flex-grow">Accéder à son profil utilisateur (Cliquer sur son nom → Profil).</label></div>
+                                <div class="step-content"><input type="checkbox" id="medesync_config_3"><label for="medesync_config_3" class="sub-step-text flex-grow">Choisir l'onglet "Accès externes".</label></div>
+                                <div class="step-content"><input type="checkbox" id="medesync_config_4"><label for="medesync_config_4" class="sub-step-text flex-grow">Section "Fournisseurs de facturation": sélectionner "oui" pour "Générer une préfacture...".</label></div>
+                                
+                                <div class="mt-2 pt-2 border-t border-slate-200">
+                                    <p class="sub-step-text font-semibold text-slate-700 mb-1">Remplir les champs selon la Castonguette:</p>
+                                    <div class="pl-4">
+                                        <div class="step-content"><input type="checkbox" id="medesync_config_5a"><label for="medesync_config_5a" class="sub-step-text flex-grow">Choisir <span class="font-semibold">Facturation.net (Obsolète)</span> si castonguette legacy et compléter Code d’utilisateur, Mot de passe.</label></div>
+                                         <div class="pl-8 mb-2">
+                                             <a href="https://drive.google.com/file/d/1FD7h0yz4a1wYxFeo08viJENDnrs4CgOS/view?usp=drive_link" target="_blank" class="resource-link text-xs">📎 Voir l'exemple (Legacy)</a>
+                                         </div>
+                                        <p class="sub-step-text pl-1 mb-2 font-bold text-slate-500">OU</p>
+                                        <div class="step-content"><input type="checkbox" id="medesync_config_5b"><label for="medesync_config_5b" class="sub-step-text flex-grow">Choisir <span class="font-semibold">Facturation.Net</span> pour la castonguette intelligente et compléter Code d’utilisateur, Mot de passe et Numéro d'agence.</label></div>
+                                        <div class="pl-8 mb-2">
+                                             <a href="https://drive.google.com/file/d/1q00Fme9VKoC3Kxtoz-coio8PTcVFkTG5/view?usp=drive_link" target="_blank" class="resource-link text-xs">📎 Voir l'exemple (Intelligente)</a>
+                                         </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="step-content pt-2"><input type="checkbox" id="medesync_config_6"><label for="medesync_config_6" class="sub-step-text flex-grow">Appuyer sur "Enregistrer".</label></div>
+                                <div class="step-content"><input type="checkbox" id="medesync_config_7"><label for="medesync_config_7" class="sub-step-text flex-grow">Redémarrer la session Medesync.</label></div>
+                                <div class="pt-2">
+                                     <a href="https://drive.google.com/file/d/13k3c4QHPuJoXmGUiAcG_4-o7SLsZ-Xrh/view?usp=sharing" target="_blank" class="resource-link">📎 Afficher la référence visuelle (Image DME)</a>
+                                </div>
+                            </div>
+                            <div class="step-content">
+                                <input type="checkbox" id="medesync_step3_4"><label for="medesync_step3_4" class="step-text flex-grow">Recevoir la confirmation du médecin que la configuration est terminée.</label>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <!-- Step 4: Final Validation -->
+                    <div class="step-card p-5 rounded-xl">
+                        <h2 class="text-xl font-bold step-title mb-4">Étape 4: Validation Finale par le Conseiller Senior</h2>
+                        
+                        <div class="decision-point p-4 rounded-lg">
+                            <h3 class="font-bold decision-title mb-2 text-lg">Point de Décision: Quel type de castonguette valider?</h3>
+                            <div class="space-y-4">
+                                <!-- Validation for Legacy -->
+                                <div class="pt-2">
+                                    <p class="font-semibold text-slate-700">→ Pour la castonguette <span class="font-bold">Legacy</span>:</p>
+                                     <div class="pl-6 mt-2">
+                                        <div class="step-content">
+                                            <input type="checkbox" id="medesync_step4_1_legacy"><label for="medesync_step4_1_legacy" class="step-text flex-grow">Valider que le médecin est capable de générer une facture "reçu RAMQ".</label>
+                                        </div>
+                                        <div class="pl-10 mb-2">
+                                            <a href="https://drive.google.com/file/d/1b1zBBcn8XkVxCeVhXznESTkSheR3RvHi/view?usp=sharing" target="_blank" class="resource-link text-sm">📎 Voir un exemple (Image Reçu RAMQ)</a>
+                                        </div>
+                                        <div class="step-content pl-8">
+                                            <input type="checkbox" id="medesync_step4_legacy_success"><label for="medesync_step4_legacy_success" class="step-text flex-grow text-green-700 font-medium">Si oui, la connexion est réussie. Le processus est terminé.</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Validation for Intelligent -->
+                                <div>
+                                    <p class="font-semibold text-slate-700 mt-2">→ Pour la castonguette <span class="font-bold">Intelligente</span>:</p>
+                                    <div class="pl-6 mt-2">
+                                        <div class="step-content">
+                                            <input type="checkbox" id="medesync_step4_1_intel"><label for="medesync_step4_1_intel" class="step-text flex-grow">Dans Facturation.net, valider que la facturation fonctionne.</label>
+                                        </div>
+                                        <div class="ml-10 border-l-2 border-slate-300 pl-4 py-2 space-y-1 text-slate-600 text-sm">
+                                            <div class="step-content"><input type="checkbox" id="medesync_valid_1"><label for="medesync_valid_1" class="sub-step-text flex-grow">Aller dans les importations DME.</label></div>
+                                            <div class="step-content"><input type="checkbox" id="medesync_valid_1b"><label for="medesync_valid_1b" class="sub-step-text flex-grow">Sélectionner le professionnel.</label></div>
+                                            <div class="step-content"><input type="checkbox" id="medesync_valid_2"><label for="medesync_valid_2" class="sub-step-text flex-grow">Sélectionner l'établissement.</label></div>
+                                            <div class="step-content"><input type="checkbox" id="medesync_valid_3"><label for="medesync_valid_3" class="sub-step-text flex-grow">Cliquer sur "Obtenir les préfacturations".</label></div>
+                                            <div class="pt-2">
+                                                <a href="https://drive.google.com/file/d/19LYnqQWIGVJhw8Y14FxqrK4-_546Ac-A/view?usp=sharing" target="_blank" class="resource-link">📎 Obtenir la préfacturation (Image FacNet 2.0)</a>
+                                            </div>
+                                        </div>
+                                        <div class="decision-point p-4 rounded-lg mt-4">
+                                            <h3 class="font-bold decision-title mb-2 text-lg">Point de Décision: La validation est-elle un succès?</h3>
+                                             <div class="space-y-3">
+                                                <div>
+                                                    <p class="font-semibold text-slate-700">→ Si OUI:</p>
+                                                    <div class="pl-6 mt-2 step-content">
+                                                         <input type="checkbox" id="medesync_step4_2a"><label for="medesync_step4_2a" class="step-text flex-grow text-green-700 font-medium">La connexion est réussie. Le processus est terminé.</label>
+                                                    </div>
+                                                </div>
+                                                <div class="pt-2">
+                                                    <p class="font-semibold text-slate-700">→ Si NON:</p>
+                                                     <div class="pl-6 mt-2 space-y-2">
+                                                        <div class="step-content">
+                                                            <input type="checkbox" id="medesync_step4_2b"><label for="medesync_step4_2b" class="step-text flex-grow text-red-700 font-medium">Escalader le problème à Dominic Senay pour qu'il valide si le médecin facture correctement.</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 5: Training -->
+                    <div class="step-card p-5 rounded-xl">
+                        <h2 class="text-xl font-bold step-title mb-4">Étape 5: Formation</h2>
+                        <div class="step-content">
+                            <input type="checkbox" id="medesync_step5_1"><label for="medesync_step5_1" class="step-text flex-grow">Le conseiller senior doit former le médecin.</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medfar (Myle) Content -->
+            <div id="medfar" class="tab-pane">
+                <div class="space-y-8">
+                    <!-- Step 1: Initial Request -->
+                    <div class="step-card p-5 rounded-xl">
+                        <h2 class="text-xl font-bold step-title mb-4">Étape 1: Réception et Traitement de la Demande Initiale</h2>
+                        <div class="step-content">
+                            <input type="checkbox" id="medfar_step1_1"><label for="medfar_step1_1" class="step-text flex-grow">Le médecin fait une demande de connexion au DME.</label>
+                        </div>
+        
+                        <div class="decision-point p-4 rounded-lg mt-4">
+                            <h3 class="font-bold decision-title mb-2 text-lg">Point de Décision: Qui a reçu la demande?</h3>
+                            <p class="text-slate-600 mb-4">Sélectionnez le scénario approprié pour continuer.</p>
+                            <div class="space-y-4">
+                                <div>
+                                    <p class="font-semibold text-slate-700">→ Si la demande est reçue par le <span class="font-bold">Conseiller Senior</span>:</p>
+                                    <div class="pl-6 mt-2 space-y-2">
+                                        <div class="step-content">
+                                            <input type="checkbox" id="medfar_step1_2a"><label for="medfar_step1_2a" class="step-text flex-grow">Envoyer les informations suivantes au Support Applicatif à <a href="mailto:soutien@facturation.net" class="resource-link">soutien@facturation.net</a>:</label>
+                                        </div>
+                                        <div class="pl-10 text-slate-600 text-sm space-y-1">
+                                            <div class="step-content"><input type="checkbox" id="medfar_info_1"><label for="medfar_info_1" class="sub-step-text flex-grow">Nom et Prénom du médecin</label></div>
+                                            <div class="step-content"><input type="checkbox" id="medfar_info_2"><label for="medfar_info_2" class="sub-step-text flex-grow">Numéro de compte Facturation.net (CL)</label></div>
+                                            <div class="step-content"><input type="checkbox" id="medfar_info_etab"><label for="medfar_info_etab" class="sub-step-text flex-grow">Numéro établissement</label></div>
+                                            <div class="step-content"><input type="checkbox" id="medfar_info_5"><label for="medfar_info_5" class="sub-step-text flex-grow">Numéro de groupe</label></div>
+                                            <div class="step-content"><input type="checkbox" id="medfar_info_6"><label for="medfar_info_6" class="sub-step-text flex-grow">Type de castonguette demandé (Intelligente ou Legacy)</label></div>
+                                            <div class="pl-8 mt-1 space-x-4">
+                                                <a href="https://drive.google.com/file/d/1q00Fme9VKoC3Kxtoz-coio8PTcVFkTG5/view?usp=drive_link" target="_blank" class="resource-link text-xs">📎 Voir l'exemple (Intelligente)</a>
+                                                <a href="https://drive.google.com/file/d/1FD7h0yz4a1wYxFeo08viJENDnrs4CgOS/view?usp=drive_link" target="_blank" class="resource-link text-xs">📎 Voir l'exemple (Legacy)</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+        
+                                <div class="pt-2">
+                                    <p class="font-semibold text-slate-700">→ Si la demande est reçue par le <span class="font-bold">Support Applicatif</span>:</p>
+                                     <div class="pl-6 mt-2 space-y-2">
+                                        <div class="step-content">
+                                            <input type="checkbox" id="medfar_step1_2b"><label for="medfar_step1_2b" class="step-text flex-grow">Valider que toutes les informations requises sont présentes.</label>
+                                        </div>
+                                        <div class="step-content">
+                                            <input type="checkbox" id="medfar_step1_3b"><label for="medfar_step1_3b" class="step-text flex-grow">Si des informations manquent, les demander au Conseiller Senior (type de castonguette).</label>
+                                        </div>
+                                        <div class="step-content">
+                                            <input type="checkbox" id="medfar_step1_4b"><label for="medfar_step1_4b" class="step-text flex-grow">Aviser le conseiller senior.</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <!-- Step 2: Formulaire -->
+                    <div class="step-card p-5 rounded-xl">
+                        <h2 class="text-xl font-bold step-title mb-4">Étape 2: Préparation et Soumission des Formulaires</h2>
+                        <div class="decision-point p-4 rounded-lg">
+                            <h3 class="font-bold decision-title mb-2 text-lg">Point de Décision: Quel type de castonguette est demandé?</h3>
+                            <div class="space-y-4">
+                                <!-- Process for Legacy -->
+                                <div class="pt-2">
+                                    <p class="font-semibold text-slate-700">→ Si <span class="font-bold">Castonguette Legacy</span>:</p>
+                                    <div class="pl-6 mt-2 space-y-4">
+                                        <div class="step-content">
+                                            <input type="checkbox" id="medfar_step2_legacy_1"><label for="medfar_step2_legacy_1" class="step-text flex-grow">Envoyer les informations requises à <a href="mailto:support@medfarsolutions.com" class="resource-link">support@medfarsolutions.com</a>:</label>
+                                        </div>
+                                        <div class="ml-10">
+                                            <div class="pl-4 text-slate-600 text-sm space-y-1 mt-2">
+                                                <div class="step-content"><input type="checkbox" id="medfar_legacy_email_1"><label for="medfar_legacy_email_1" class="sub-step-text flex-grow">CL-XXXXX et nom du compte</label></div>
+                                                <div class="step-content"><input type="checkbox" id="medfar_legacy_email_2"><label for="medfar_legacy_email_2" class="sub-step-text flex-grow">Configurer par défaut ce compte en date du XX XX XXXX.</label></div>
+                                                <div class="step-content"><input type="checkbox" id="medfar_legacy_email_3"><label for="medfar_legacy_email_3" class="sub-step-text flex-grow">Nom du médecin:</label></div>
+                                                <div class="step-content"><input type="checkbox" id="medfar_legacy_email_4"><label for="medfar_legacy_email_4" class="sub-step-text flex-grow">Prénom du médecin :</label></div>
+                                                <div class="step-content"><input type="checkbox" id="medfar_legacy_email_5"><label for="medfar_legacy_email_5" class="sub-step-text flex-grow">No de pratique :</label></div>
+                                                <div class="step-content"><input type="checkbox" id="medfar_legacy_email_6"><label for="medfar_legacy_email_6" class="sub-step-text flex-grow">Groupe :</label></div>
+                                                <div class="step-content"><input type="checkbox" id="medfar_legacy_email_7"><label for="medfar_legacy_email_7" class="sub-step-text flex-grow">Téléphone :</label></div>
+                                                <div class="step-content"><input type="checkbox" id="medfar_legacy_email_8"><label for="medfar_legacy_email_8" class="sub-step-text flex-grow">Courriel :</label></div>
+                                                <div class="step-content"><input type="checkbox" id="medfar_legacy_email_9"><label for="medfar_legacy_email_9" class="sub-step-text flex-grow">Établissement :</label></div>
+                                                <div class="step-content"><input type="checkbox" id="medfar_legacy_email_10"><label for="medfar_legacy_email_10" class="sub-step-text flex-grow">Agence:</label></div>
+                                            </div>
+                                            <div class="mt-2">
+                                                <a href="https://drive.google.com/file/d/1FZf3iNsBdjHAR0mKE6ueA1edZDd5ZK_X/view?usp=sharing" target="_blank" class="resource-link text-sm">📎 Voir exemple de courriel (Legacy)</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Process for Intelligent -->
+                                <div>
+                                    <p class="font-semibold text-slate-700 mt-2">→ Si <span class="font-bold">Castonguette Intelligente</span>:</p>
+                                    <div class="pl-6 mt-2 space-y-4">
+                                        <div class="step-content">
+                                            <input type="checkbox" id="medfar_step2_intel_1"><label for="medfar_step2_intel_1" class="step-text flex-grow">Envoyer la demande de paramétrage à Medfar (Myle) à l'adresse <a href="mailto:support@medfarsolutions.com" class="resource-link">support@medfarsolutions.com</a> avec les informations suivantes:</label>
+                                        </div>
+                                        <div class="ml-10">
+                                            <div class="pl-4 text-slate-600 text-sm space-y-1 mt-2">
+                                                <div class="step-content"><input type="checkbox" id="medfar_email_1"><label for="medfar_email_1" class="sub-step-text flex-grow">Médecin : Dr XXXX XXXX</label></div>
+                                                <div class="step-content"><input type="checkbox" id="medfar_email_2"><label for="medfar_email_2" class="sub-step-text flex-grow">Licence : XXXXXXX</label></div>
+                                                <div class="step-content"><input type="checkbox" id="medfar_email_3"><label for="medfar_email_3" class="sub-step-text flex-grow">Groupe : X</label></div>
+                                                <div class="step-content"><input type="checkbox" id="medfar_email_4"><label for="medfar_email_4" class="sub-step-text flex-grow">Agence : XXXXX</label></div>
+                                                <div class="step-content"><input type="checkbox" id="medfar_email_5"><label for="medfar_email_5" class="sub-step-text flex-grow">Demander l'URL de connexion Medfar (Myle)</label></div>
+                                            </div>
+                                            <div class="mt-2">
+                                                 <a href="https://drive.google.com/file/d/1iju5lJDk-N3zE5mc0aw6EkvGOhd4nWQ4/view?usp=sharing" target="_blank" class="resource-link text-sm">📎 Voir exemple de courriel (Intelligente)</a>
+                                            </div>
+                                        </div>
+                                        <div class="conditional-step p-4 rounded-lg mt-4">
+                                            <h3 class="font-bold conditional-title mb-2">Étapes Complémentaires</h3>
+                                            <div class="step-content">
+                                                <input type="checkbox" id="medfar_step2_1a"><label for="medfar_step2_1a" class="step-text flex-grow">Support applicatif: remplir le Google Sheet (Intégration_DME_Castonguette_FMP).</label>
+                                            </div>
+                                            <div class="step-content">
+                                                <input type="checkbox" id="medfar_step2_1b"><label for="medfar_step2_1b" class="step-text flex-grow">Support applicatif: faire la configuration des utilisateurs Castonguette intelligente, dans FacNet 2.0.</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 3: Configuration -->
+                    <div class="step-card p-5 rounded-xl">
+                        <h2 class="text-xl font-bold step-title mb-4">Étape 3: Configuration du DME par le Médecin <span class="text-base font-medium text-slate-500">(valide pour la Castonguette intelligente et legacy)</span></h2>
+                        <div class="space-y-4">
+                            <div class="step-content">
+                                <input type="checkbox" id="medfar_step3_1"><label for="medfar_step3_1" class="step-text flex-grow">Attendre le courriel de réponse de Medfar (Myle) contenant la confirmation de la configuration. (Le courriel sera envoyé au support.)</label>
+                            </div>
+                            <div class="ml-10">
+                                <a href="https://drive.google.com/file/d/1h3kjvCeqm2LP3B7UYSNgLQZBFKbF3bIp/view?usp=sharing" target="_blank" class="resource-link text-sm">📎 Voir exemple de réponse Medfar (Myle)</a>
+                            </div>
+                            <div class="step-content">
+                                <input type="checkbox" id="medfar_step3_3"><label for="medfar_step3_3" class="step-text flex-grow">Informer le médecin de configurer son agence de facturation dans Medfar (Myle) selon les étapes suivantes:</label>
+                            </div>
+                            <div class="ml-10 border-l-2 border-slate-300 pl-4 py-2 space-y-1 text-slate-600 text-sm">
+                                <div class="step-content"><input type="checkbox" id="medfar_new_config_1"><label for="medfar_new_config_1" class="sub-step-text flex-grow">Aller dans Configuration dans MYLE</label></div>
+                                <div class="step-content"><input type="checkbox" id="medfar_new_config_2"><label for="medfar_new_config_2" class="sub-step-text flex-grow">Aller dans la section Agence de facturation</label></div>
+                                <div class="conditional-step p-3 rounded-lg mt-2">
+                                     <p class="sub-step-text font-semibold text-slate-700 mb-1">Choisir l'agence appropriée:</p>
+                                     <div class="pl-4">
+                                        <div class="step-content"><input type="checkbox" id="medfar_config_legacy"><label for="medfar_config_legacy" class="sub-step-text flex-grow">Pour la Castonguette Legacy, choisir <span class="font-semibold">"Facturation.net"</span></label></div>
+                                        <div class="step-content"><input type="checkbox" id="medfar_config_intel"><label for="medfar_config_intel" class="sub-step-text flex-grow">Pour la Castonguette Intelligente, choisir <span class="font-semibold">"FMP"</span></label></div>
+                                     </div>
+                                </div>
+                                <div class="pt-2">
+                                     <a href="https://drive.google.com/file/d/1zzb-gurUM6Sgjh0DhCfHN9BuYLRkWcJf/view?usp=sharing" target="_blank" class="resource-link text-xs">📎 Voir un exemple (Configuration Agence)</a>
+                                </div>
+                            </div>
+                            <div class="step-content">
+                                <input type="checkbox" id="medfar_step3_4"><label for="medfar_step3_4" class="step-text flex-grow">Recevoir la confirmation du médecin que la configuration est terminée.</label>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <!-- Step 4: Final Validation -->
+                    <div class="step-card p-5 rounded-xl">
+                        <h2 class="text-xl font-bold step-title mb-4">Étape 4: Validation Finale par le Conseiller Senior</h2>
+                        
+                        <div class="decision-point p-4 rounded-lg">
+                            <h3 class="font-bold decision-title mb-2 text-lg">Point de Décision: Quel type de castonguette valider?</h3>
+                            <div class="space-y-4">
+                                <!-- Validation for Legacy -->
+                                <div class="pt-2">
+                                    <p class="font-semibold text-slate-700">→ Pour la castonguette <span class="font-bold">Legacy</span>:</p>
+                                     <div class="pl-6 mt-2">
+                                        <div class="step-content">
+                                            <input type="checkbox" id="medfar_step4_1_legacy"><label for="medfar_step4_1_legacy" class="step-text flex-grow">Valider que le médecin est capable de générer une facture "reçu RAMQ".</label>
+                                        </div>
+                                        <div class="pl-10 mb-2">
+                                            <a href="https://drive.google.com/file/d/1b1zBBcn8XkVxCeVhXznESTkSheR3RvHi/view?usp=sharing" target="_blank" class="resource-link text-sm">📎 Voir un exemple (Image Reçu RAMQ)</a>
+                                        </div>
+                                        <div class="step-content pl-8">
+                                            <input type="checkbox" id="medfar_step4_legacy_success"><label for="medfar_step4_legacy_success" class="step-text flex-grow text-green-700 font-medium">Si oui, la connexion est réussie. Le processus est terminé.</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Validation for Intelligent -->
+                                <div>
+                                    <p class="font-semibold text-slate-700 mt-2">→ Pour la castonguette <span class="font-bold">Intelligente</span>:</p>
+                                    <div class="pl-6 mt-2">
+                                        <div class="step-content">
+                                            <input type="checkbox" id="medfar_step4_1_intel"><label for="medfar_step4_1_intel" class="step-text flex-grow">Dans Facturation.net, valider que la facturation fonctionne.</label>
+                                        </div>
+                                        <div class="ml-10 border-l-2 border-slate-300 pl-4 py-2 space-y-1 text-slate-600 text-sm">
+                                            <div class="step-content"><input type="checkbox" id="medfar_valid_1"><label for="medfar_valid_1" class="sub-step-text flex-grow">Aller dans les importations DME.</label></div>
+                                            <div class="step-content"><input type="checkbox" id="medfar_valid_1b"><label for="medfar_valid_1b" class="sub-step-text flex-grow">Sélectionner le professionnel.</label></div>
+                                            <div class="step-content"><input type="checkbox" id="medfar_valid_2"><label for="medfar_valid_2" class="sub-step-text flex-grow">Sélectionner l'établissement.</label></div>
+                                            <div class="step-content"><input type="checkbox" id="medfar_valid_3"><label for="medfar_valid_3" class="sub-step-text flex-grow">Cliquer sur "Obtenir les préfacturations".</label></div>
+                                            <div class="pt-2">
+                                                <a href="https://drive.google.com/file/d/19LYnqQWIGVJhw8Y14FxqrK4-_546Ac-A/view?usp=sharing" target="_blank" class="resource-link">📎 Obtenir la préfacturation (Image FacNet 2.0)</a>
+                                            </div>
+                                        </div>
+                                        <div class="decision-point p-4 rounded-lg mt-4">
+                                            <h3 class="font-bold decision-title mb-2 text-lg">Point de Décision: La validation est-elle un succès?</h3>
+                                             <div class="space-y-3">
+                                                <div>
+                                                    <p class="font-semibold text-slate-700">→ Si OUI:</p>
+                                                    <div class="pl-6 mt-2 step-content">
+                                                         <input type="checkbox" id="medfar_step4_2a"><label for="medfar_step4_2a" class="step-text flex-grow text-green-700 font-medium">La connexion est réussie. Le processus est terminé.</label>
+                                                    </div>
+                                                </div>
+                                                <div class="pt-2">
+                                                    <p class="font-semibold text-slate-700">→ Si NON:</p>
+                                                     <div class="pl-6 mt-2 space-y-2">
+                                                        <div class="step-content">
+                                                            <input type="checkbox" id="medfar_step4_2b"><label for="medfar_step4_2b" class="step-text flex-grow text-red-700 font-medium">Escalader le problème à Dominic Senay pour qu'il valide si le médecin facture correctement.</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 5: Training -->
+                    <div class="step-card p-5 rounded-xl">
+                        <h2 class="text-xl font-bold step-title mb-4">Étape 5: Formation</h2>
+                        <div class="step-content">
+                            <input type="checkbox" id="medfar_step5_1"><label for="medfar_step5_1" class="step-text flex-grow">Le conseiller senior doit former le médecin.</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Omnimed Content -->
+            <div id="omnimed" class="tab-pane">
+                <div class="space-y-8">
+                    <!-- Step 1: Initial Request -->
+                    <div class="step-card p-5 rounded-xl">
+                        <h2 class="text-xl font-bold step-title mb-4">Étape 1: Réception et Traitement de la Demande Initiale</h2>
+                        <div class="step-content">
+                            <input type="checkbox" id="omni_step1_1"><label for="omni_step1_1" class="step-text flex-grow">Le médecin fait une demande de connexion au DME.</label>
+                        </div>
+        
+                        <div class="decision-point p-4 rounded-lg mt-4">
+                            <h3 class="font-bold decision-title mb-2 text-lg">Point de Décision: Qui a reçu la demande?</h3>
+                            <p class="text-slate-600 mb-4">Sélectionnez le scénario approprié pour continuer.</p>
+                            <div class="space-y-4">
+                                <div>
+                                    <p class="font-semibold text-slate-700">→ Si la demande est reçue par le <span class="font-bold">Conseiller Senior</span>:</p>
+                                    <div class="pl-6 mt-2 space-y-2">
+                                        <div class="step-content">
+                                            <input type="checkbox" id="omni_step1_2a"><label for="omni_step1_2a" class="step-text flex-grow">Envoyer les informations suivantes au Support Applicatif à <a href="mailto:soutien@facturation.net" class="resource-link">soutien@facturation.net</a>:</label>
+                                        </div>
+                                        <div class="pl-10 text-slate-600 text-sm space-y-1">
+                                            <div class="step-content"><input type="checkbox" id="omni_info_1"><label for="omni_info_1" class="sub-step-text flex-grow">Nom et Prénom du médecin</label></div>
+                                            <div class="step-content"><input type="checkbox" id="omni_info_2"><label for="omni_info_2" class="sub-step-text flex-grow">Numéro de compte Facturation.net (CL)</label></div>
+                                            <div class="step-content"><input type="checkbox" id="omni_info_etab"><label for="omni_info_etab" class="sub-step-text flex-grow">Numéro établissement</label></div>
+                                            <div class="step-content"><input type="checkbox" id="omni_info_5"><label for="omni_info_5" class="sub-step-text flex-grow">Numéro de groupe</label></div>
+                                            <div class="step-content"><input type="checkbox" id="omni_info_6"><label for="omni_info_6" class="sub-step-text flex-grow">Type de connexion demandé (Castonguette intelligente ou Grille)</label></div>
+                                            <div class="pl-8 mt-1 space-x-4">
+                                                <a href="https://drive.google.com/file/d/1q00Fme9VKoC3Kxtoz-coio8PTcVFkTG5/view?usp=drive_link" target="_blank" class="resource-link text-xs">📎 Voir l'exemple (Intelligente)</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+        
+                                <div class="pt-2">
+                                    <p class="font-semibold text-slate-700">→ Si la demande est reçue par le <span class="font-bold">Support Applicatif</span>:</p>
+                                     <div class="pl-6 mt-2 space-y-2">
+                                        <div class="step-content">
+                                            <input type="checkbox" id="omni_step1_2b"><label for="omni_step1_2b" class="step-text flex-grow">Valider que toutes les informations requises sont présentes.</label>
+                                        </div>
+                                        <div class="step-content">
+                                            <input type="checkbox" id="omni_step1_3b"><label for="omni_step1_3b" class="step-text flex-grow">Si des informations manquent, les demander au Conseiller Senior (type de castonguette).</label>
+                                        </div>
+                                        <div class="step-content">
+                                            <input type="checkbox" id="omni_step1_4b"><label for="omni_step1_4b" class="step-text flex-grow">Aviser le conseiller senior.</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <!-- Step 2: Formulaire -->
+                    <div class="step-card p-5 rounded-xl">
+                        <h2 class="text-xl font-bold step-title mb-4">Étape 2: Préparation et Soumission des Formulaires</h2>
+                        <div class="decision-point p-4 rounded-lg">
+                            <h3 class="font-bold decision-title mb-2 text-lg">Point de Décision: Quel type de connexion est demandé?</h3>
+                            <div class="space-y-4">
+                                <!-- Process for Grille -->
+                                <div class="pt-2">
+                                    <p class="font-semibold text-slate-700">→ Si le client demande la <span class="font-bold">Grille</span>:</p>
+                                     <div class="pl-6 mt-2 space-y-4">
+                                        <div class="step-content">
+                                            <input type="checkbox" id="omni_step2_grille_1"><label for="omni_step2_grille_1" class="step-text flex-grow">Remplir le formulaire "Omnimed Autorisation divulgation d'information" avec signature du médecin.</label>
+                                        </div>
+                                        <div class="ml-10">
+                                            <a href="https://drive.google.com/file/d/1DW_BzPMjVkPWc1TaR_c7ZARMzXZiV0ex/view?usp=sharing" target="_blank" class="resource-link">📎 Ouvrir le formulaire Omnimed</a>
+                                        </div>
+                                        <div class="step-content">
+                                            <input type="checkbox" id="omni_step2_grille_1b"><label for="omni_step2_grille_1b" class="step-text flex-grow">À la réception, valider que le formulaire est complet et bien signé.</label>
+                                        </div>
+                                        <div class="step-content">
+                                            <input type="checkbox" id="omni_step2_grille_2"><label for="omni_step2_grille_2" class="step-text flex-grow">Envoyer le formulaire rempli à <a href="mailto:Partenaires@omnimed.com" class="resource-link">Partenaires@omnimed.com</a> en incluant dans le courriel:</label>
+                                        </div>
+                                        <div class="pl-10 text-slate-600 text-sm space-y-1">
+                                            <div class="step-content"><input type="checkbox" id="omni_email_1"><label for="omni_email_1" class="sub-step-text flex-grow">Prénom du médecin</label></div>
+                                            <div class="step-content"><input type="checkbox" id="omni_email_2"><label for="omni_email_2" class="sub-step-text flex-grow">Nom du médecin</label></div>
+                                            <div class="step-content"><input type="checkbox" id="omni_email_3"><label for="omni_email_3" class="sub-step-text flex-grow">Courriel du médecin</label></div>
+                                            <div class="step-content"><input type="checkbox" id="omni_email_4"><label for="omni_email_4" class="sub-step-text flex-grow">Numéro de pratique (CMQ)</label></div>
+                                            <div class="step-content"><input type="checkbox" id="omni_email_5"><label for="omni_email_5" class="sub-step-text flex-grow">Numéro de compte Omnimed</label></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Process for Intelligent -->
+                                <div>
+                                    <p class="font-semibold text-slate-700 mt-2">→ Si le client demande la <span class="font-bold">Castonguette Intelligente</span>:</p>
+                                    <div class="pl-6 mt-2 space-y-4">
+                                        <div class="conditional-step p-4 rounded-lg mt-2">
+                                            <h3 class="font-bold conditional-title mb-2">Étapes pour Castonguette Intelligente Uniquement</h3>
+                                            <div class="step-content">
+                                                <input type="checkbox" id="omni_step2_1a"><label for="omni_step2_1a" class="step-text flex-grow">Support applicatif: remplir le Google Sheet (Intégration_DME_Castonguette_FMP).</label>
+                                            </div>
+                                            <div class="step-content">
+                                                <input type="checkbox" id="omni_step2_1b"><label for="omni_step2_1b" class="step-text flex-grow">Support applicatif: faire la configuration des utilisateurs Castonguette intelligente, dans FacNet 2.0.</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 3: Configuration -->
+                    <div class="step-card p-5 rounded-xl">
+                        <h2 class="text-xl font-bold step-title mb-4">Étape 3: Configuration</h2>
+                         <div class="decision-point p-4 rounded-lg">
+                            <h3 class="font-bold decision-title mb-2 text-lg">Point de Décision: Quel type de connexion configurer?</h3>
+                            <div class="space-y-4">
+                                <!-- Config for Grille -->
+                                <div class="pt-2">
+                                    <p class="font-semibold text-slate-700">→ Pour la <span class="font-bold">Grille</span>:</p>
+                                    <div class="pl-6 mt-2 space-y-4">
+                                        <div class="step-content">
+                                            <input type="checkbox" id="omni_step3_grille_1"><label for="omni_step3_grille_1" class="step-text flex-grow">Attendre le courriel de réponse d'Omnimed contenant le Google Sheet avec les informations (le courriel sera envoyé au support).</label>
+                                        </div>
+                                        <div class="ml-10">
+                                            <a href="https://drive.google.com/file/d/1YTwPu8NdAK6MjYVXmWEiUSVV76LMyJQR/view?usp=sharing" target="_blank" class="resource-link">📎 Voir exemple de fichier (accès API Omnimed)</a>
+                                        </div>
+                                        <div class="step-content">
+                                            <input type="checkbox" id="omni_step3_grille_2"><label for="omni_step3_grille_2" class="step-text flex-grow">Le support Facturation.net doit faire la configuration dans FacNet 2.0 avec les étapes suivantes:</label>
+                                        </div>
+                                        <div class="ml-10 border-l-2 border-slate-300 pl-4 py-2 space-y-1 text-slate-600 text-sm">
+                                            <div class="step-content"><input type="checkbox" id="omni_config_grille_1"><label for="omni_config_grille_1" class="sub-step-text flex-grow">Aller dans Importation.</label></div>
+                                            <div class="step-content"><input type="checkbox" id="omni_config_grille_2"><label for="omni_config_grille_2" class="sub-step-text flex-grow">Choisir Omnimed.</label></div>
+                                            <div class="step-content"><input type="checkbox" id="omni_config_grille_3"><label for="omni_config_grille_3" class="sub-step-text flex-grow">Ensuite Configuration.</label></div>
+                                            <div class="step-content"><input type="checkbox" id="omni_config_grille_4"><label for="omni_config_grille_4" class="sub-step-text flex-grow">Remplir la section incluant identifiant unique d'institution (code UUID) de la clinique fournit dans le google sheet de l'etape precedente.</label></div>
+                                            <div class="pt-2">
+                                                <a href="https://drive.google.com/file/d/1IKXRoTmNh920CT0ZvKUGSUNuck3yBP0j/view?usp=sharing" target="_blank" class="resource-link text-xs">📎Exemple configuration UUID</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Config for Intelligent -->
+                                <div>
+                                    <p class="font-semibold text-slate-700 mt-2">→ Pour la <span class="font-bold">Castonguette Intelligente</span>:</p>
+                                    <div class="pl-6 mt-2 space-y-2">
+                                         <div class="step-content">
+                                            <input type="checkbox" id="omni_step3_intel_1"><label for="omni_step3_intel_1" class="step-text flex-grow">Le medecin doit faire la configuration dans Omnimed selon les étapes decrite dans la procedure.</label>
+                                        </div>
+                                        <div class="ml-10">
+                                            <a href="https://drive.google.com/file/d/1qaGtK3MTZ964pDD5ehUT54j8SWuejdLA/view?usp=sharing" target="_blank" class="resource-link">📎 Procédure de configuration Omnimed</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <!-- Step 4: Final Validation -->
+                    <div class="step-card p-5 rounded-xl">
+                        <h2 class="text-xl font-bold step-title mb-4">Étape 4: Validation Finale par le Conseiller Senior</h2>
+                        
+                        <div class="decision-point p-4 rounded-lg">
+                            <h3 class="font-bold decision-title mb-2 text-lg">Point de Décision: Quel type de connexion valider?</h3>
+                            <div class="space-y-4">
+                                <!-- Validation for Grille -->
+                                <div class="pt-2">
+                                    <p class="font-semibold text-slate-700">→ Pour la <span class="font-bold">Grille</span>:</p>
+                                     <div class="pl-6 mt-2">
+                                        <div class="step-content">
+                                            <input type="checkbox" id="omni_step4_1_grille"><label for="omni_step4_1_grille" class="step-text flex-grow">Valider que le médecin est capable de générer une grille dans le menu importation, sous menu omnimed , importations.</label>
+                                        </div>
+                                        <div class="pl-10 mb-2">
+                                            <a href="https://drive.google.com/file/d/1zvV8Ewv3ceblNiWAxRoCJT55PceaSMlw/view?usp=sharing" target="_blank" class="resource-link text-sm">📎 Image grille Omnimed</a>
+                                        </div>
+                                        <div class="step-content pl-8">
+                                            <input type="checkbox" id="omni_step4_grille_success"><label for="omni_step4_grille_success" class="step-text flex-grow text-green-700 font-medium">Si oui, la connexion est réussie. Le processus est terminé.</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Validation for Intelligent -->
+                                <div>
+                                    <p class="font-semibold text-slate-700 mt-2">→ Pour la castonguette <span class="font-bold">Intelligente</span>:</p>
+                                    <div class="pl-6 mt-2">
+                                        <div class="step-content">
+                                            <input type="checkbox" id="omni_step4_1_intel"><label for="omni_step4_1_intel" class="step-text flex-grow">Dans Facturation.net, valider que la facturation fonctionne.</label>
+                                        </div>
+                                        <div class="ml-10 border-l-2 border-slate-300 pl-4 py-2 space-y-1 text-slate-600 text-sm">
+                                            <div class="step-content"><input type="checkbox" id="omni_valid_1"><label for="omni_valid_1" class="sub-step-text flex-grow">Aller dans les importations DME.</label></div>
+                                            <div class="step-content"><input type="checkbox" id="omni_valid_1b"><label for="omni_valid_1b" class="sub-step-text flex-grow">Sélectionner le professionnel.</label></div>
+                                            <div class="step-content"><input type="checkbox" id="omni_valid_2"><label for="omni_valid_2" class="sub-step-text flex-grow">Sélectionner l'établissement.</label></div>
+                                            <div class="step-content"><input type="checkbox" id="omni_valid_3"><label for="omni_valid_3" class="sub-step-text flex-grow">Cliquer sur "Obtenir les préfacturations".</label></div>
+                                            <div class="pt-2">
+                                                <a href="https://drive.google.com/file/d/19LYnqQWIGVJhw8Y14FxqrK4-_546Ac-A/view?usp=sharing" target="_blank" class="resource-link">📎 Obtenir la préfacturation (Image FacNet 2.0)</a>
+                                            </div>
+                                        </div>
+                                        <div class="decision-point p-4 rounded-lg mt-4">
+                                            <h3 class="font-bold decision-title mb-2 text-lg">Point de Décision: La validation est-elle un succès?</h3>
+                                             <div class="space-y-3">
+                                                <div>
+                                                    <p class="font-semibold text-slate-700">→ Si OUI:</p>
+                                                    <div class="pl-6 mt-2 step-content">
+                                                         <input type="checkbox" id="omni_step4_2a"><label for="omni_step4_2a" class="step-text flex-grow text-green-700 font-medium">La connexion est réussie. Le processus est terminé.</label>
+                                                    </div>
+                                                </div>
+                                                <div class="pt-2">
+                                                    <p class="font-semibold text-slate-700">→ Si NON:</p>
+                                                     <div class="pl-6 mt-2 space-y-2">
+                                                        <div class="step-content">
+                                                            <input type="checkbox" id="omni_step4_2b"><label for="omni_step4_2b" class="step-text flex-grow text-red-700 font-medium">Escalader le problème à Dominic Senay pour qu'il valide si le médecin facture correctement.</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 5: Training -->
+                    <div class="step-card p-5 rounded-xl">
+                        <h2 class="text-xl font-bold step-title mb-4">Étape 5: Formation</h2>
+                        <div class="step-content">
+                            <input type="checkbox" id="omni_step5_1"><label for="omni_step5_1" class="step-text flex-grow">Le conseiller senior doit former le médecin.</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ofys Content -->
+            <div id="ofys" class="tab-pane">
+                 <div class="space-y-8">
+                    <!-- Step 1: Initial Request -->
+                    <div class="step-card p-5 rounded-xl">
+                        <h2 class="text-xl font-bold step-title mb-4">Étape 1: Réception et Traitement de la Demande Initiale</h2>
+                        <div class="step-content">
+                            <input type="checkbox" id="ofys_step1_1"><label for="ofys_step1_1" class="step-text flex-grow">Le médecin fait une demande de connexion au DME.</label>
+                        </div>
+        
+                        <div class="decision-point p-4 rounded-lg mt-4">
+                            <h3 class="font-bold decision-title mb-2 text-lg">Point de Décision: Qui a reçu la demande?</h3>
+                            <p class="text-slate-600 mb-4">Sélectionnez le scénario approprié pour continuer.</p>
+                            <div class="space-y-4">
+                                <div>
+                                    <p class="font-semibold text-slate-700">→ Si la demande est reçue par le <span class="font-bold">Conseiller Senior</span>:</p>
+                                    <div class="pl-6 mt-2 space-y-2">
+                                        <div class="step-content">
+                                            <input type="checkbox" id="ofys_step1_2a"><label for="ofys_step1_2a" class="step-text flex-grow">Envoyer les informations suivantes au Support Applicatif à <a href="mailto:soutien@facturation.net" class="resource-link">soutien@facturation.net</a>:</label>
+                                        </div>
+                                        <div class="pl-10 text-slate-600 text-sm space-y-1">
+                                            <div class="step-content"><input type="checkbox" id="ofys_info_1"><label for="ofys_info_1" class="sub-step-text flex-grow">Nom et Prénom du médecin</label></div>
+                                            <div class="step-content"><input type="checkbox" id="ofys_info_2"><label for="ofys_info_2" class="sub-step-text flex-grow">Numéro de compte Facturation.net (CL)</label></div>
+                                            <div class="step-content"><input type="checkbox" id="ofys_info_etab"><label for="ofys_info_etab" class="sub-step-text flex-grow">Numéro établissement</label></div>
+                                            <div class="step-content"><input type="checkbox" id="ofys_info_5"><label for="ofys_info_5" class="sub-step-text flex-grow">Numéro de groupe</label></div>
+                                            <div class="step-content"><input type="checkbox" id="ofys_info_6"><label for="ofys_info_6" class="sub-step-text flex-grow">Type de castonguette demandé (Intelligente)</label></div>
+                                            <div class="pl-8 mt-1">
+                                                <a href="https://drive.google.com/file/d/1q00Fme9VKoC3Kxtoz-coio8PTcVFkTG5/view?usp=drive_link" target="_blank" class="resource-link text-xs">📎 Voir l'exemple (Intelligente)</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+        
+                                <div class="pt-2">
+                                    <p class="font-semibold text-slate-700">→ Si la demande est reçue par le <span class="font-bold">Support Applicatif</span>:</p>
+                                     <div class="pl-6 mt-2 space-y-2">
+                                        <div class="step-content">
+                                            <input type="checkbox" id="ofys_step1_2b"><label for="ofys_step1_2b" class="step-text flex-grow">Valider que toutes les informations requises sont présentes.</label>
+                                        </div>
+                                        <div class="step-content">
+                                            <input type="checkbox" id="ofys_step1_3b"><label for="ofys_step1_3b" class="step-text flex-grow">Si des informations manquent, les demander au Conseiller Senior.</label>
+                                        </div>
+                                        <div class="step-content">
+                                            <input type="checkbox" id="ofys_step1_4b"><label for="ofys_step1_4b" class="step-text flex-grow">Aviser le conseiller senior.</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <!-- Step 2: Configuration de la Castonguette Intelligente -->
+                    <div class="step-card p-5 rounded-xl">
+                        <h2 class="text-xl font-bold step-title mb-4">Étape 2: Configuration de la Castonguette Intelligente</h2>
+                        <div class="space-y-4">
+                            <div class="step-content">
+                                 <input type="checkbox" id="ofys_step2_0"><label for="ofys_step2_0" class="step-text flex-grow">À la réception de la demande, effectuer les étapes complémentaires pour obtenir le nom d'utilisateur et le mot de passe.</label>
+                            </div>
+                            <div class="conditional-step p-4 rounded-lg mt-2">
+                                <h3 class="font-bold conditional-title mb-2">Étapes Complémentaires</h3>
+                                <div class="step-content">
+                                    <input type="checkbox" id="ofys_step2_1a"><label for="ofys_step2_1a" class="step-text flex-grow">Support applicatif: remplir le Google Sheet (Intégration_DME_Castonguette_FMP).</label>
+                                </div>
+                                <div class="step-content">
+                                    <input type="checkbox" id="ofys_step2_1b"><label for="ofys_step2_1b" class="step-text flex-grow">Support applicatif: faire la configuration des utilisateurs Castonguette intelligente, dans FacNet 2.0.</label>
+                                </div>
+                            </div>
+                            <div class="step-content">
+                                <input type="checkbox" id="ofys_step2_2"><label for="ofys_step2_2" class="step-text flex-grow">Envoyer un courriel au médecin avec les informations suivantes:</label>
+                            </div>
+                            <div class="pl-10 text-slate-600 text-sm space-y-1">
+                                <div class="step-content"><input type="checkbox" id="ofys_info_email_1"><label for="ofys_info_email_1" class="sub-step-text flex-grow">Nom d'utilisateur et mot de passe</label></div>
+                                <div class="step-content"><input type="checkbox" id="ofys_info_email_2"><label for="ofys_info_email_2" class="sub-step-text flex-grow">Numéro de Groupe</label></div>
+                                <div class="step-content"><input type="checkbox" id="ofys_info_email_3"><label for="ofys_info_email_3" class="sub-step-text flex-grow">Numéro d'agence</label></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 3: Configuration -->
+                    <div class="step-card p-5 rounded-xl">
+                        <h2 class="text-xl font-bold step-title mb-4">Étape 3: Configuration du DME par le Médecin</h2>
+                        <div class="space-y-4">
+                           <div class="step-content">
+                                <input type="checkbox" id="ofys_step3_main"><label for="ofys_step3_main" class="step-text flex-grow">Le médecin doit configurer son compte dans Ofys pour activer l'intégration.</label>
+                            </div>
+                            <div class="ml-10 border-l-2 border-slate-300 pl-4 py-2 space-y-1 text-slate-600 text-sm">
+                                 <p class="sub-step-text font-semibold text-slate-700 mb-2">Configuration de l'utilisateur :</p>
+                                 <div class="step-content"><input type="checkbox" id="ofys_config_1"><label for="ofys_config_1" class="sub-step-text flex-grow">Dans le tableau de bord Ofys Pro, cliquer sur le crayon pour modifier la fiche d'utilisateur.</label></div>
+                                 <div class="step-content"><input type="checkbox" id="ofys_config_2"><label for="ofys_config_2" class="sub-step-text flex-grow">Dans le champ "Facturation RAMQ", choisir <span class="font-semibold">FMP / Facturation.net</span>. Entrer le nom d'utilisateur et le mot de passe fournis.</label></div>
+                                 <div class="step-content"><input type="checkbox" id="ofys_config_3"><label for="ofys_config_3" class="sub-step-text flex-grow">Dans la section RAMQ et RVSQ, entrer le numéro d'agence et le groupe administratif.</label></div>
+                                 <div class="step-content"><input type="checkbox" id="ofys_config_4"><label for="ofys_config_4" class="sub-step-text flex-grow">Enregistrer la fiche.</label></div>
+                                 <div class="step-content"><input type="checkbox" id="ofys_config_5"><label for="ofys_config_5" class="sub-step-text flex-grow">Se déconnecter de Ofys, puis se reconnecter.</label></div>
+                            </div>
+                            <div class="step-content">
+                                <input type="checkbox" id="ofys_step3_4"><label for="ofys_step3_4" class="step-text flex-grow">Recevoir la confirmation du médecin que la configuration est terminée.</label>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <!-- Step 4: Final Validation -->
+                    <div class="step-card p-5 rounded-xl">
+                        <h2 class="text-xl font-bold step-title mb-4">Étape 4: Validation Finale par le Conseiller Senior</h2>
+                        
+                        <div class="pl-6 mt-2">
+                            <div class="step-content">
+                                <input type="checkbox" id="ofys_step4_1_intel"><label for="ofys_step4_1_intel" class="step-text flex-grow">Dans Facturation.net, valider que la facturation fonctionne.</label>
+                            </div>
+                            <div class="ml-10 border-l-2 border-slate-300 pl-4 py-2 space-y-1 text-slate-600 text-sm">
+                                <div class="step-content"><input type="checkbox" id="ofys_valid_1"><label for="ofys_valid_1" class="sub-step-text flex-grow">Aller dans les importations DME.</label></div>
+                                <div class="step-content"><input type="checkbox" id="ofys_valid_1b"><label for="ofys_valid_1b" class="sub-step-text flex-grow">Sélectionner le professionnel.</label></div>
+                                <div class="step-content"><input type="checkbox" id="ofys_valid_2"><label for="ofys_valid_2" class="sub-step-text flex-grow">Sélectionner l'établissement.</label></div>
+                                <div class="step-content"><input type="checkbox" id="ofys_valid_3"><label for="ofys_valid_3" class="sub-step-text flex-grow">Cliquer sur "Obtenir les préfacturations".</label></div>
+                                <div class="pt-2">
+                                    <a href="https://drive.google.com/file/d/19LYnqQWIGVJhw8Y14FxqrK4-_546Ac-A/view?usp=sharing" target="_blank" class="resource-link">📎 Obtenir la préfacturation (Image FacNet 2.0)</a>
+                                </div>
+                            </div>
+                            <div class="decision-point p-4 rounded-lg mt-4">
+                                <h3 class="font-bold decision-title mb-2 text-lg">Point de Décision: La validation est-elle un succès?</h3>
+                                 <div class="space-y-3">
+                                    <div>
+                                        <p class="font-semibold text-slate-700">→ Si OUI:</p>
+                                        <div class="pl-6 mt-2 step-content">
+                                             <input type="checkbox" id="ofys_step4_2a"><label for="ofys_step4_2a" class="step-text flex-grow text-green-700 font-medium">La connexion est réussie. Le processus est terminé.</label>
+                                        </div>
+                                    </div>
+                                    <div class="pt-2">
+                                        <p class="font-semibold text-slate-700">→ Si NON:</p>
+                                         <div class="pl-6 mt-2 space-y-2">
+                                            <div class="step-content">
+                                                <input type="checkbox" id="ofys_step4_2b"><label for="ofys_step4_2b" class="step-text flex-grow text-red-700 font-medium">Escalader le problème à Dominic Senay pour qu'il valide si le médecin facture correctement.</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 5: Training -->
+                    <div class="step-card p-5 rounded-xl">
+                        <h2 class="text-xl font-bold step-title mb-4">Étape 5: Formation</h2>
+                        <div class="step-content">
+                            <input type="checkbox" id="ofys_step5_1"><label for="ofys_step5_1" class="step-text flex-grow">Le conseiller senior doit former le médecin.</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script type="module">
+        // Firebase Imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- DO NOT EDIT ---
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "...", authDomain: "...", projectId: "..." };
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'dme-checklist-app';
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : undefined;
+        // --- END DO NOT EDIT ---
+        
+        // Firebase Initialization
+        let app, auth, db;
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            setLogLevel('debug'); // Use 'debug' for detailed logs, or 'silent' in production
+        } catch (e) {
+            console.error("Firebase initialization failed:", e);
+        }
+
+        // DOM Elements
+        const practiceNumberInput = document.getElementById('practice-number-input');
+        const loadBtn = document.getElementById('load-btn');
+        const saveBtn = document.getElementById('save-btn');
+        const mainTitle = document.getElementById('main-title');
+        const feedbackMessage = document.getElementById('feedback-message');
+        const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+        
+        // --- Functions ---
+        const showFeedback = (message, isError = false) => {
+            feedbackMessage.textContent = message;
+            feedbackMessage.style.color = isError ? '#dc2626' : '#166534';
+            feedbackMessage.style.opacity = '1';
+            setTimeout(() => {
+                feedbackMessage.style.opacity = '0';
+            }, 3000);
+        };
+        
+        const resetForm = () => {
+            allCheckboxes.forEach(cb => cb.checked = false);
+        };
+
+        const loadData = async () => {
+            const practiceId = practiceNumberInput.value.trim();
+            if (!practiceId) {
+                showFeedback("Veuillez entrer un numéro de pratique.", true);
+                return;
+            }
+
+            try {
+                const docRef = doc(db, `artifacts/${appId}/public/data/dme-checklists`, practiceId);
+                const docSnap = await getDoc(docRef);
+
+                resetForm(); // Reset form before loading new data
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    mainTitle.textContent = `Aide-Mémoire: #${data.numeroDePratique}`;
+                    
+                    if (data.checkboxStates) {
+                        for (const [id, isChecked] of Object.entries(data.checkboxStates)) {
+                            const checkbox = document.getElementById(id);
+                            if (checkbox) {
+                                checkbox.checked = isChecked;
+                            }
+                        }
+                    }
+                    showFeedback("Données chargées avec succès!");
+                } else {
+                    mainTitle.textContent = `Nouveau Dossier: #${practiceId}`;
+                    showFeedback("Aucun dossier trouvé. Créez-en un nouveau.");
+                }
+            } catch (error) {
+                console.error("Error loading document: ", error);
+                showFeedback("Erreur lors du chargement.", true);
+            }
+        };
+
+        const saveData = async () => {
+            const practiceId = practiceNumberInput.value.trim();
+            if (!practiceId) {
+                showFeedback("Veuillez entrer un numéro de pratique pour sauvegarder.", true);
+                return;
+            }
+
+            try {
+                const checkboxStates = {};
+                allCheckboxes.forEach(cb => {
+                    checkboxStates[cb.id] = cb.checked;
+                });
+                
+                const docRef = doc(db, `artifacts/${appId}/public/data/dme-checklists`, practiceId);
+                await setDoc(docRef, {
+                    numeroDePratique: practiceId,
+                    checkboxStates: checkboxStates,
+                    lastUpdated: new Date().toISOString()
+                });
+                
+                mainTitle.textContent = `Aide-Mémoire: #${practiceId}`;
+                showFeedback("Sauvegarde réussie!");
+            } catch (error) {
+                console.error("Error saving document: ", error);
+                showFeedback("Erreur lors de la sauvegarde.", true);
+            }
+        };
+
+        // --- Event Listeners ---
+        const setupApp = () => {
+            if (!db) {
+                console.error("Firestore is not available.");
+                showFeedback("La connexion à la base de données a échoué.", true);
+                return;
+            }
+            loadBtn.addEventListener('click', loadData);
+            saveBtn.addEventListener('click', saveData);
+        };
+
+        // --- Authentication and App Start ---
+        const startApp = async () => {
+            try {
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                console.log("Authentication successful. User:", auth.currentUser.uid);
+                setupApp();
+            } catch (error) {
+                console.error("Authentication failed:", error);
+            }
+        };
+
+        // Run the app
+        startApp();
+
+
+        // Tab switching logic
+        const tabs = document.querySelectorAll('.tab-link');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetId = tab.getAttribute('data-tab-target');
+                
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                tabPanes.forEach(pane => {
+                    if (pane.id === targetId) {
+                        pane.classList.add('active');
+                    } else {
+                        pane.classList.remove('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
