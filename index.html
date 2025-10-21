@@ -960,30 +960,32 @@
     <script type="module">
         // Firebase Imports
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-       rules_version = '2';
+        // --- Configuration Firebase ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyCxdUPeHtVdPCKj12YR3HAvqzPaRXCwk84",
+            authDomain: "aide-memoire-dme.firebaseapp.com",
+            projectId: "aide-memoire-dme",
+            storageBucket: "aide-memoire-dme.appspot.com",
+            messagingSenderId: "983096206349",
+            appId: "1:983096206349:web:83ee2a9e5d990902082144"
+        };
+        const appId = 'dme-checklist-app';
+        // --- Fin de la configuration ---
 
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if false;
-    }
-  }
-}
-        
         // Firebase Initialization
         let app, auth, db;
         try {
             app = initializeApp(firebaseConfig);
             auth = getAuth(app);
             db = getFirestore(app);
-            setLogLevel('debug'); // Use 'debug' for detailed logs, or 'silent' in production
+            setLogLevel('debug'); 
         } catch (e) {
             console.error("Firebase initialization failed:", e);
         }
-
+        
         // DOM Elements
         const practiceNumberInput = document.getElementById('practice-number-input');
         const loadBtn = document.getElementById('load-btn');
@@ -1004,6 +1006,7 @@ service cloud.firestore {
         
         const resetForm = () => {
             allCheckboxes.forEach(cb => cb.checked = false);
+            mainTitle.textContent = 'Aide-Mémoire';
         };
 
         const loadData = async () => {
@@ -1017,7 +1020,7 @@ service cloud.firestore {
                 const docRef = doc(db, `artifacts/${appId}/public/data/dme-checklists`, practiceId);
                 const docSnap = await getDoc(docRef);
 
-                resetForm(); // Reset form before loading new data
+                resetForm(); 
 
                 if (docSnap.exists()) {
                     const data = docSnap.data();
@@ -1081,18 +1084,28 @@ service cloud.firestore {
             saveBtn.addEventListener('click', saveData);
         };
 
+        // --- NOTE IMPORTANTE POUR L'AUTHENTIFICATION ---
+        // L'erreur "auth/configuration-not-found" signifie généralement que la méthode
+        // d'authentification anonyme n'est pas activée dans votre projet Firebase.
+        //
+        // POUR CORRIGER :
+        // 1. Allez sur la console Firebase de votre projet (console.firebase.google.com).
+        // 2. Dans le menu de gauche, allez dans Bâtir > Authentication.
+        // 3. Cliquez sur l'onglet "Sign-in method" (Méthode de connexion).
+        // 4. Dans la liste des fournisseurs, trouvez "Anonyme" et cliquez sur le crayon pour modifier.
+        // 5. Activez le fournisseur et cliquez sur "Enregistrer".
+        // 6. Rechargez votre application. L'erreur devrait disparaître.
+        // ----------------------------------------------------
+
         // --- Authentication and App Start ---
         const startApp = async () => {
             try {
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                } else {
-                    await signInAnonymously(auth);
-                }
+                await signInAnonymously(auth);
                 console.log("Authentication successful. User:", auth.currentUser.uid);
                 setupApp();
             } catch (error) {
                 console.error("Authentication failed:", error);
+                showFeedback("Erreur d'auth. Avez-vous activé la connexion anonyme dans Firebase?", true);
             }
         };
 
@@ -1123,5 +1136,4 @@ service cloud.firestore {
     </script>
 </body>
 </html>
-
 
