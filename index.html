@@ -267,7 +267,7 @@
                                     <div class="pl-4">
                                         <div class="step-content"><input type="checkbox" id="medesync_config_5a"><label for="medesync_config_5a" class="sub-step-text flex-grow">Choisir <span class="font-semibold">Facturation.net (Obsolète)</span> si castonguette legacy et compléter Code d’utilisateur, Mot de passe.</label></div>
                                          <div class="pl-8 mb-2">
-                                              <a href="https://drive.google.com/file/d/1FD7h0yz4a1wYxFeo08viJENDnrs4CgOS/view?usp=drive_link" target="_blank" class="resource-link text-xs">📎 Voir l'exemple (Legacy)</a>
+                                             <a href="https://drive.google.com/file/d/1FD7h0yz4a1wYxFeo08viJENDnrs4CgOS/view?usp=drive_link" target="_blank" class="resource-link text-xs">📎 Voir l'exemple (Legacy)</a>
                                          </div>
                                         <p class="sub-step-text pl-1 mb-2 font-bold text-slate-500">OU</p>
                                         <div class="step-content"><input type="checkbox" id="medesync_config_5b"><label for="medesync_config_5b" class="sub-step-text flex-grow">Choisir <span class="font-semibold">Facturation.Net</span> pour la castonguette intelligente et compléter Code d’utilisateur, Mot de passe et Numéro d'agence.</label></div>
@@ -491,8 +491,14 @@
                                 <a href="https://drive.google.com/file/d/1h3kjvCeqm2LP3B7UYSNgLQZBFKbF3bIp/view?usp=sharing" target="_blank" class="resource-link text-sm">📎 Voir exemple de réponse Medfar (Myle)</a>
                             </div>
                             <div class="step-content">
-                                <input type="checkbox" id="medfar_step3_3"><label for="medfar_step3_3" class="step-text flex-grow">Informer le médecin de configurer son agence de facturation dans Medfar (Myle) selon les étapes suivantes:</label>
+                                <input type="checkbox" id="medfar_step3_3"><label for="medfar_step3_3" class="step-text flex-grow">Informer le médecin par courriel, de configurer son agence de facturation dans Medfar (Myle) selon les étapes suivantes:</label>
                             </div>
+                            <!-- === MODIFICATION ICI === -->
+                            <div class="ml-10 space-y-1 mt-2 mb-2">
+                                 <div><a href="https://drive.google.com/file/d/1nA4d5UkMtSNrFRGEp6WJH0ZHi1Ju5T-_/view?usp=sharing" target="_blank" class="resource-link text-sm">📎 Exemple de courriel Castonguette intelligente</a></div>
+                                 <div><a href="https://drive.google.com/file/d/1U8YMTJgsqSVKRl047RqlSib_oIJVnlUq/view?usp=sharing" target="_blank" class="resource-link text-sm">📎 Exemple de courriel Castonguette legacy</a></div>
+                            </div>
+                            <!-- === FIN DE LA MODIFICATION === -->
                             <div class="ml-10 border-l-2 border-slate-300 pl-4 py-2 space-y-1 text-slate-600 text-sm">
                                 <div class="step-content"><input type="checkbox" id="medfar_new_config_1"><label for="medfar_new_config_1" class="sub-step-text flex-grow">Aller dans Configuration dans MYLE</label></div>
                                 <div class="step-content"><input type="checkbox" id="medfar_new_config_2"><label for="medfar_new_config_2" class="sub-step-text flex-grow">Aller dans la section Agence de facturation</label></div>
@@ -960,11 +966,13 @@
     <script type="module">
         // Firebase Imports
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        // Import correct auth methods
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- Configuration Firebase ---
-        const firebaseConfig = {
+        // Use user's config as a fallback if environment variable isn't set
+        const defaultConfig = {
             apiKey: "AIzaSyCxdUPeHtVdPCKj12YR3HAvqzPaRXCwk84",
             authDomain: "aide-memoire-dme.firebaseapp.com",
             projectId: "aide-memoire-dme",
@@ -972,7 +980,13 @@
             messagingSenderId: "983096206349",
             appId: "1:983096206349:web:83ee2a9e5d990902082144"
         };
-        const appId = 'dme-checklist-app';
+        
+        // Use environment variables __firebase_config and __app_id
+        const firebaseConfig = typeof __firebase_config !== 'undefined' 
+            ? JSON.parse(__firebase_config) 
+            : defaultConfig;
+            
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'dme-checklist-app';
         // --- Fin de la configuration ---
 
         // Firebase Initialization
@@ -1017,6 +1031,7 @@
             }
 
             try {
+                // Use the correct public path structure
                 const docRef = doc(db, `artifacts/${appId}/public/data/dme-checklists`, practiceId);
                 const docSnap = await getDoc(docRef);
 
@@ -1058,6 +1073,7 @@
                     checkboxStates[cb.id] = cb.checked;
                 });
                 
+                // Use the correct public path structure
                 const docRef = doc(db, `artifacts/${appId}/public/data/dme-checklists`, practiceId);
                 await setDoc(docRef, {
                     numeroDePratique: practiceId,
@@ -1084,27 +1100,25 @@
             saveBtn.addEventListener('click', saveData);
         };
 
-        // --- NOTE IMPORTANTE POUR L'AUTHENTIFICATION ---
-        // L'erreur "auth/configuration-not-found" signifie généralement que la méthode
-        // d'authentification anonyme n'est pas activée dans votre projet Firebase.
-        //
-        // POUR CORRIGER :
-        // 1. Allez sur la console Firebase de votre projet (console.firebase.google.com).
-        // 2. Dans le menu de gauche, allez dans Bâtir > Authentication.
-        // 3. Cliquez sur l'onglet "Sign-in method" (Méthode de connexion).
-        // 4. Dans la liste des fournisseurs, trouvez "Anonyme" et cliquez sur le crayon pour modifier.
-        // 5. Activez le fournisseur et cliquez sur "Enregistrer".
-        // 6. Rechargez votre application. L'erreur devrait disparaître.
-        // ----------------------------------------------------
-
         // --- Authentication and App Start ---
         const startApp = async () => {
+             if (!auth) {
+                console.error("Firebase Auth is not initialized.");
+                showFeedback("Erreur d'initialisation de l'authentification.", true);
+                return;
+            }
             try {
-                await signInAnonymously(auth);
-                console.log("Authentication successful. User:", auth.currentUser.uid);
+                // Use environment token if available, otherwise sign in anonymously
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                console.log("Authentication successful. User:", auth.currentUser?.uid || 'anonymous');
                 setupApp();
             } catch (error) {
                 console.error("Authentication failed:", error);
+                // Keep the user's helpful error message
                 showFeedback("Erreur d'auth. Avez-vous activé la connexion anonyme dans Firebase?", true);
             }
         };
@@ -1136,3 +1150,4 @@
     </script>
 </body>
 </html>
+
