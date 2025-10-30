@@ -176,6 +176,9 @@
                                             <div class="step-content"><input type="checkbox" id="medesync_info_2"><label for="medesync_info_2" class="sub-step-text flex-grow">Numéro de compte Facturation.net (CL)</label></div>
                                             <div class="step-content"><input type="checkbox" id="medesync_info_etab"><label for="medesync_info_etab" class="sub-step-text flex-grow">Numéro établissement</label></div>
                                             <div class="step-content"><input type="checkbox" id="medesync_info_5"><label for="medesync_info_5" class="sub-step-text flex-grow">Numéro de groupe</label></div>
+                                            <div class="step-content">
+                                                <input type="checkbox" id="medesync_step1_senior_validate_plan"><label for="medesync_step1_senior_validate_plan" class="sub-step-text flex-grow">Valider le plan de service (Un plan Agence aura toujours une Castonguette intelligente)</label>
+                                            </div>
                                             <div class="step-content"><input type="checkbox" id="medesync_info_6"><label for="medesync_info_6" class="sub-step-text flex-grow">Type de castonguette demandé (Intelligente ou Legacy)</label></div>
                                             <div class="pl-8 mt-1 space-x-4">
                                                 <a href="https://drive.google.com/file/d/1q00Fme9VKoC3Kxtoz-coio8PTcVFkTG5/view?usp=drive_link" target="_blank" class="resource-link text-xs">📎 Voir l'exemple (Intelligente)</a>
@@ -387,6 +390,12 @@
                                             <div class="step-content"><input type="checkbox" id="medfar_info_2"><label for="medfar_info_2" class="sub-step-text flex-grow">Numéro de compte Facturation.net (CL)</label></div>
                                             <div class="step-content"><input type="checkbox" id="medfar_info_etab"><label for="medfar_info_etab" class="sub-step-text flex-grow">Numéro établissement</label></div>
                                             <div class="step-content"><input type="checkbox" id="medfar_info_5"><label for="medfar_info_5" class="sub-step-text flex-grow">Numéro de groupe</label></div>
+                                            <div class="step-content">
+                                                <input type="checkbox" id="medfar_step1_senior_validate_plan"><label for="medfar_step1_senior_validate_plan" class="sub-step-text flex-grow">Valider le plan de service (Un plan Agence aura toujours une Castonguette intelligente)</label>
+                                            </div>
+                                            <div class="step-content">
+                                                <input type="checkbox" id="medfar_step1_senior_ask_url"><label for="medfar_step1_senior_ask_url" class="sub-step-text flex-grow">Demande l'URL de connexion au médecin. (Si disponible)</label>
+                                            </div>
                                             <div class="step-content"><input type="checkbox" id="medfar_info_6"><label for="medfar_info_6" class="sub-step-text flex-grow">Type de castonguette demandé (Intelligente ou Legacy)</label></div>
                                             <div class="pl-8 mt-1 space-x-4">
                                                 <a href="https://drive.google.com/file/d/1q00Fme9VKoC3Kxtoz-coio8PTcVFkTG5/view?usp=drive_link" target="_blank" class="resource-link text-xs">📎 Voir l'exemple (Intelligente)</a>
@@ -973,15 +982,16 @@
         // --- Configuration Firebase ---
         // Use user's config as a fallback if environment variable isn't set
         const defaultConfig = {
-            apiKey: "AIzaSyCxdUPeHtVdPCKj12YR3HAvqzPaRXCwk84",
-            authDomain: "aide-memoire-dme.firebaseapp.com",
-            projectId: "aide-memoire-dme",
-            storageBucket: "aide-memoire-dme.appspot.com",
-            messagingSenderId: "983096206349",
-            appId: "1:983096206349:web:83ee2a9e5d990902082144"
+            apiKey: "YOUR_API_KEY", // Replace with your actual Firebase config
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "aide-memoire-dme", // User's project ID
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
         };
         
         // Use environment variables __firebase_config and __app_id
+        // This part is correct and will use the Canvas environment variables
         const firebaseConfig = typeof __firebase_config !== 'undefined' 
             ? JSON.parse(__firebase_config) 
             : defaultConfig;
@@ -1030,6 +1040,12 @@
                 return;
             }
 
+            if (!db) {
+                showFeedback("La base de données n'est pas connectée.", true);
+                console.error("Firestore (db) is not initialized.");
+                return;
+            }
+
             try {
                 // Use the correct public path structure
                 const docRef = doc(db, `artifacts/${appId}/public/data/dme-checklists`, practiceId);
@@ -1064,6 +1080,12 @@
             const practiceId = practiceNumberInput.value.trim();
             if (!practiceId) {
                 showFeedback("Veuillez entrer un numéro de pratique pour sauvegarder.", true);
+                return;
+            }
+
+            if (!db) {
+                showFeedback("La base de données n'est pas connectée.", true);
+                console.error("Firestore (db) is not initialized.");
                 return;
             }
 
@@ -1103,28 +1125,37 @@
         // --- Authentication and App Start ---
         const startApp = async () => {
              if (!auth) {
-                console.error("Firebase Auth is not initialized.");
-                showFeedback("Erreur d'initialisation de l'authentification.", true);
-                return;
-            }
-            try {
+                 console.error("Firebase Auth is not initialized.");
+                 showFeedback("Erreur d'initialisation de l'authentification.", true);
+                 return;
+             }
+             try {
                 // Use environment token if available, otherwise sign in anonymously
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     await signInWithCustomToken(auth, __initial_auth_token);
                 } else {
+                    // Fallback to anonymous sign-in if token is not present
                     await signInAnonymously(auth);
                 }
                 console.log("Authentication successful. User:", auth.currentUser?.uid || 'anonymous');
                 setupApp();
-            } catch (error) {
-                console.error("Authentication failed:", error);
-                // Keep the user's helpful error message
-                showFeedback("Erreur d'auth. Avez-vous activé la connexion anonyme dans Firebase?", true);
-            }
+             } catch (error) {
+                 console.error("Authentication failed:", error);
+                 // Check if it's the default config that's failing
+                 if (firebaseConfig.apiKey === "YOUR_API_KEY") {
+                     showFeedback("Config Firebase par défaut. Veuillez configurer Firebase.", true);
+                 } else {
+                    showFeedback("Erreur d'authentification. Vérifiez les règles Firestore.", true);
+                 }
+             }
         };
 
-        // Run the app
-        startApp();
+        // Run the app only if Firebase was initialized
+        if (app) {
+            startApp();
+        } else {
+            showFeedback("L'initialisation de Firebase a échoué. L'application ne peut pas démarrer.", true);
+        }
 
 
         // Tab switching logic
@@ -1150,5 +1181,8 @@
     </script>
 </body>
 </html>
+
+
+
 
 
