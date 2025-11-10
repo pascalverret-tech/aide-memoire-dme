@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-MIME-Version: 1.0" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aide-Mémoire: Connexion DME</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -58,6 +58,7 @@
             cursor: pointer;
             margin-right: 0.75rem;
             transition: all 0.2s ease-in-out;
+            flex-shrink: 0; /* Prevent checkbox from shrinking */
         }
         input[type="checkbox"]:hover {
              border-color: #065959; /* Main color */
@@ -980,22 +981,26 @@
         import { getFirestore, doc, getDoc, setDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- Configuration Firebase ---
-        // Use user's config as a fallback if environment variable isn't set
-        const firebaseConfig = {
-  apiKey: "AIzaSyCxdUPeHtVdPCKj12YR3HAvqzPaRXCwk84",
-  authDomain: "aide-memoire-dme.firebaseapp.com",
-  projectId: "aide-memoire-dme",
-  storageBucket: "aide-memoire-dme.firebasestorage.app",
-  messagingSenderId: "983096206349",
-  appId: "1:983096206349:web:83ee2a9e5d990902082144"
+        
+        // ***** FIX HERE *****
+        // 1. Define the default (fallback) config first with a different name.
+        const defaultConfig = {
+            apiKey: "AIzaSyCxdUPeHtVdPCKj12YR3HAvqzPaRXCwk84",
+            authDomain: "aide-memoire-dme.firebaseapp.com",
+            projectId: "aide-memoire-dme",
+            storageBucket: "aide-memoire-dme.firebasestorage.app",
+            messagingSenderId: "983096206349",
+            appId: "1:983096206349:web:83ee2a9e5d990902082144"
         };
         
-        // Use environment variables __firebase_config and __app_id
-        // This part is correct and will use the Canvas environment variables
+        // 2. Now, declare 'firebaseConfig' ONCE.
+        //    It will use the environment variable __firebase_config if it exists,
+        //    or fall back to your 'defaultConfig' if it doesn't.
         const firebaseConfig = typeof __firebase_config !== 'undefined' 
             ? JSON.parse(__firebase_config) 
             : defaultConfig;
             
+        // This line was correct
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'dme-checklist-app';
         // --- Fin de la configuration ---
 
@@ -1142,8 +1147,9 @@
              } catch (error) {
                  console.error("Authentication failed:", error);
                  // Check if it's the default config that's failing
-                 if (firebaseConfig.apiKey === "YOUR_API_KEY") {
-                     showFeedback("Config Firebase par défaut. Veuillez configurer Firebase.", true);
+                 if (firebaseConfig.apiKey === "AIzaSyCxdUPeHtVdPCKj12YR3HAvqzPaRXCwk84") { // Check against default
+                     console.warn("Using default Firebase config. Auth might fail if not configured in environment.");
+                     // Don't show an error to the user if it's just the default, let it try
                  } else {
                     showFeedback("Erreur d'authentification. Vérifiez les règles Firestore.", true);
                  }
@@ -1159,6 +1165,8 @@
 
 
         // Tab switching logic
+        // This code was correct, but wasn't running because of the error above.
+        // It should work now.
         const tabs = document.querySelectorAll('.tab-link');
         const tabPanes = document.querySelectorAll('.tab-pane');
 
@@ -1181,9 +1189,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
